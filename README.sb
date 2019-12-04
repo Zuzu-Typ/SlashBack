@@ -1,0 +1,9 @@
+\h1 \SlashBack\ h1\
+\h2 \A simple markup language that can be converted to MarkDown\ h2\
+The only character you \i \really\ i\ need for \b \SlashBack\ b\ is backslash (\code \\\\ code\)
+
+It's your universal tool to style your text!
+
+For reference, look at \url https://github.com/Zuzu-Typ/SlashBack/blob/master/README.sb \README.sb\ url\.
+
+This very README was composed in SlashBack (:
