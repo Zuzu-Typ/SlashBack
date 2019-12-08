@@ -68,6 +68,8 @@ class TextConfig:
     code            = None
     image           = None
     url             = None
+    mention         = None
+    reference       = None
     list            = NO_LIST
     task            = NO_TASK
     header          = 0
@@ -85,6 +87,8 @@ class TextConfig:
             self.code           = other_config.code
             self.image          = other_config.image
             self.url            = other_config.url
+            self.mention        = other_config.mention
+            self.reference      = other_config.reference
             self.list           = other_config.list
             self.task           = other_config.task
             self.header         = other_config.header
@@ -111,6 +115,10 @@ class TextConfig:
             out.add(f"image {self.image}")
         if self.url:
             out.add(f"url {self.url}")
+        if self.mention:
+            out.add(f"mention {self.mention}")
+        if self.reference:
+            out.add(f"reference {self.reference}")
         if self.list:
             out.add(("ordered list" if self.list == self.ORDERED_LIST else "unordered list") + f" at {self.index}")
         if self.task:
@@ -141,16 +149,18 @@ class ParsedText:
         table_signalized = True
 
         for text in self.text_list:
-            text_string = text.text.replace(b"\t", b"    ").replace(b"    ", b"&emsp;").replace(b"  ", b"&nbsp;" * 2).replace(b"\r\n", b"\n").replace(b"\r", b"\n").replace(b"\n", b"  \n")
+            text_string = text.text
             this_text_config = text.text_config
 
             if not this_text_config.code:
                 for char in "\\`*_{}[]()#+-.!":
                     text_string = text_string.replace(char.encode(), f"\\{char}".encode())
-                for char, replacement in ((b"<", b"&lt;"), (b">", b"&gt;"), (b"~", b"&#126;"), (b"|", b"&#124;")):
+                for char, replacement in ((b"&", b"&amp;"), (b"<", b"&lt;"), (b">", b"&gt;"), (b"~", b"&#126;"), (b"|", b"&#124;"), (b"@", b"@<!---->"), (b"`", b"&#96;")):
                     text_string = text_string.replace(char, replacement)
+                    
+                text_string = text_string.replace(b"\t", b"    ").replace(b"  ", b"&nbsp;" * 2).replace(b"\r\n", b"\n").replace(b"\r", b"\n").replace(b"\n", b"  \n")
             else:
-                text_string = text_string.replace(b"`", b"\\`")
+                pass#text_string = text_string.replace(b"`", b"&#96;")
 
             if not table_signalized and b"\n" in text_string:
                 table_signalized = True
@@ -202,6 +212,12 @@ class ParsedText:
 
             if not current_text_config.separator and this_text_config.separator:
                 out.append(b"\n---")
+
+            if not current_text_config.mention and this_text_config.mention:
+                out.append(b"@" + this_text_config.mention)
+
+            if not current_text_config.reference and this_text_config.reference:
+                out.append(this_text_config.reference)
             
             # backward #
 
@@ -250,8 +266,6 @@ class ParsedText:
             
         if current_text_config.bold:
             out.append(b"**")
-            
-            
             
         return b"".join(out)
                 
@@ -426,6 +440,12 @@ class SlashBackParser:
                 if end and not config.code:
                     raise SlashBackParserError("Invalid Syntax. Closing \\ code\\ before opening \\code \\")
                 config.code = None if end else info if info else True
+
+            elif first_command == b"mention":
+                config.mention = info
+
+            elif first_command == b"reference":
+                config.reference = info
 
             else:
                 raise SlashBackParserError(f"Unknown command \"{first_command.decode()}\"")

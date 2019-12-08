@@ -1,9 +1,32 @@
-\h1 \SlashBack\ h1\
-\h2 \A simple markup language that can be converted to MarkDown\ h2\
-The only character you \i \really\ i\ need for \b \SlashBack\ b\ is backslash (\code \\\\ code\)
+\image Icon/SlashBackCropped.jpg \SlashBack\ image\
+\h2 \An unsurprising markup language\ h2\
+SlashBack attempts to make \b \professional\ b\ documentation \b \easier\ b\.
+If you ever wanted your \b \text\ b\ to appear \b \exactly as you wrote it\ b\,
+\b \SlashBack is for you!\ b\
 
-It's your universal tool to style your text!
+The \b \only character\ b\ you need to tell \b \SlashBack\ b\ what to do, is \b \backslash\ b\ (\code \\\\ code\)
+It's your \b \universal tool\ b\ to \b \style your text!\ b\
+
+\list unordered \
+\-\\b \No characters that suddenly vanish\ b\ (or produce unexpected text formatting)
+\-\\b \No cumbersome trickery\ b\ to make \b \indents\ b\ or \b \multiple spaces\ b\ (like "    ")
+\-\\b \No need for escape characters\ b\ (the only character you can escape is backslash)
+\ list\
+
+\h2 \Using SlashBack\ h2\
+\h3 \Syntax\ h3\
+\b \SlashBack\ b\'s syntax is \b \similar\ b\ to the syntax of \b \HTML\ b\.
+
+Every \b \text snippet\ b\ that's supposed to be displayed in a \b \given format\ b\ has to be \b \surrounded by a start and end tag\ b\.
+Every tag in turn has to be surrounded by backslashes.
+In other words, a tag begins with a backslash and ends with one.
+Example:
+    Given you want to put a strong emphasis on the word "\b \money\ b\".
+    You can do so by writing \code \\\b \\money\\ b\\\ code\.
+    The "\code \b\ code\"-tag stands for \b \bold\ b\.
+    
 
 For reference, look at \url https://github.com/Zuzu-Typ/SlashBack/blob/master/README.sb \README.sb\ url\.
 
 This very README was composed in SlashBack (:
+
