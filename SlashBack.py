@@ -38,7 +38,7 @@ from builtins import open as builtins_open
 
 import sys, os, traceback, string
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __welcome__ = f"""\
 SlashBack v{__version__} by Zuzu_Typ"""
