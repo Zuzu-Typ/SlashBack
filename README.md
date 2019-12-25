@@ -91,8 +91,8 @@ Alternatively the ``` q ``` tag can be used\.
   
 ### Images  
 Images can be embedded using the ``` image ``` tag, like so:  
-``` \image https://github.com/Zuzu-Typ/SlashBack/raw/master/Icon/SB.svg\Broken Image \ image\ ```  
-![Broken Image ](https://github.com/Zuzu-Typ/SlashBack/raw/master/Icon/SB.svg)  
+``` \image Icon/SB.svg\Broken Image \ image\ ```  
+![Broken Image ](Icon/SB.svg)  
   
 You can alternatively use the ``` img ``` tag\.  
   
