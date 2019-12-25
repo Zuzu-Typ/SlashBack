@@ -52,7 +52,7 @@ SlashBack supports only four different types of text formatting:
 * ``` b ``` \- **Bold** \(or **strong**\)  
 * ``` i ``` \- *Italic*  
 * ``` s ``` \- ~~Strikethrough~~  
-* ``` u ``` \- <u>Underline</u>  
+* ``` u ``` \- <u>Underline</u> \(may not be supported\)  
   
 **And *any* ~~com<u>bi*n</u>ation*~~ of them**  
   

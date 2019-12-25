@@ -50,7 +50,7 @@ SlashBack supports only four different types of text formatting:
 \-\\code \b\ code\ - \b \Bold\ b\ (or \b \strong\ b\)
 \-\\code \i\ code\ - \i \Italic\ i\
 \-\\code \s\ code\ - \s \Strikethrough\ s\
-\-\\code \u\ code\ - \u \Underline\ u\
+\-\\code \u\ code\ - \u \Underline\ u\ (may not be supported)
 \ list\
 \b \And \i \any\ i\ \s \com\u \bi\i \n\ u\ation\ i\\ s\ of them\ b\
 
