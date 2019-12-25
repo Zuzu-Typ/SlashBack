@@ -1,4 +1,4 @@
-\image Icon/SlashBackCropped.jpg \SlashBack\ image\
+\image Icon/SlashBackCropped.svg \SlashBack\ image\
 \h2 \An unsurprising markup language\ h2\
 SlashBack attempts to make \b \professional\ b\ documentation \b \easier\ b\.
 If you ever wanted your \b \text\ b\ to appear \b \exactly as you wrote it\ b\,
@@ -13,18 +13,191 @@ It's your \b \universal tool\ b\ to \b \style your text!\ b\
 \-\\b \No need for escape characters\ b\ (the only character you can escape is backslash)
 \ list\
 
-\h2 \Using SlashBack\ h2\
-\h3 \Syntax\ h3\
+\h1 \Using SlashBack\ h1\
+\h2 \Syntax\ h2\
 \b \SlashBack\ b\'s syntax is \b \similar\ b\ to the syntax of \b \HTML\ b\.
 
 Every \b \text snippet\ b\ that's supposed to be displayed in a \b \given format\ b\ has to be \b \surrounded by a start and end tag\ b\.
-Every tag in turn has to be surrounded by backslashes.
+Every \b \tag\ b\ in turn has to be surrounded by backslashes.
 In other words, a tag begins with a backslash and ends with one.
 Example:
     Given you want to put a strong emphasis on the word "\b \money\ b\".
-    You can do so by writing \code \\\b \\money\\ b\\\ code\.
+    You can do so by writing \code \\\b\\money\\b\\\ code\.
     The "\code \b\ code\"-tag stands for \b \bold\ b\.
     
+To make it easier to \b \differentiate\ b\ between \b \start and end tags\ b\, you can put \b \spaces\ b\ \b \after\ b\ start tags and \b \before\ b\ end tags, like so:
+\code \This text is \\b \\important\\ b\\.\ code\
+
+Alternatively, tags can be \b \prefixed\ b\ with one (or multiple) of the following \b \symbols\ b\: \code \!#/:|+.~>_<\ code\ (i.e. these symbols can precede tag identifiers). One example could be:
+\code \This text is \\+b\\important\\~b\\.\ code\
+
+\h2 \Tags\ h2\
+The following tags are supported:
+\h3 \Headers\ h3\
+SlashBack supports six different header sizes:
+\code \h1\ code\, \code \h2\ code\, \code \h3\ code\, \code \h4\ code\, \code \h5\ code\ and \code \h6\ code\
+Examples:
+\h1 \Header size 1 (\code \\\h1 \\Header size 1\\ h1\\\ code\)\ h1\
+\h2 \Header size 2 (\code \\\h2 \\Header size 2\\ h2\\\ code\)\ h2\
+\h3 \Header size 3 (\code \\\h3 \\Header size 3\\ h3\\\ code\)\ h3\
+\h4 \Header size 4 (\code \\\h4 \\Header size 4\\ h4\\\ code\)\ h4\
+\h5 \Header size 5 (\code \\\h5 \\Header size 5\\ h5\\\ code\)\ h5\
+\h6 \Header size 6 (\code \\\h6 \\Header size 6\\ h6\\\ code\)\ h6\
+
+\h3 \Text formatting tags\ h3\
+SlashBack supports only four different types of text formatting:
+\list unordered \
+\-\\code \b\ code\ - \b \Bold\ b\ (or \b \strong\ b\)
+\-\\code \i\ code\ - \i \Italic\ i\
+\-\\code \s\ code\ - \s \Strikethrough\ s\
+\-\\code \u\ code\ - \u \Underline\ u\
+\ list\
+\b \And \i \any\ i\ \s \com\u \bi\i \n\ u\ation\ i\\ s\ of them\ b\
+
+\h3 \Code snippets\ h3\
+You can put code in your documentation using the \code \code\ code\ tag.
+If you need multiline code, simply put a \code \code\ code\ tag in the lines before and after the code segment.
+For multiline code you can even specify a programming language after the initial code tag.
+Example:
+\code \
+\\code python \\
+import this
+print("interesting...")
+\\ code\\
+\ code\
+becomes
+\code python \
+import this
+print("interesting...")
+\ code\
+
+A list of language IDs can be found over \url https://github.com/jmm/gfm-lang-ids/wiki/GitHub-Flavored-Markdown-(GFM)-language-IDs \here\ url\.
+
+\h3 \Hyperlinks (URLs, sections)\ h3\
+If you want to reference other websites or link to a specific section of your documentation, you can use the \code \url\ code\ tag.
+The specified target could either be a real url (or relative link), such as \url ismycomputeron.com\a useless website\ url\:
+\code \\\url ismycomputeron.com \\a useless website\\ url\\\ code\
+Alternatively, it can be a \url #hyperlinks-urls-sections \link\ url\ to a header in your document:
+\code \\\url #hyperlinks-urls-sections \\link\\ url\\\ code\
+
+\h3 \Quotes\ h3\
+\quote \"To use quotes, thou must use the \code \quote\ code\ tag"
+~ The Author\ quote\
+Alternatively the \code \q\ code\ tag can be used.
+
+\h3 \Images\ h3\
+Images can be embedded using the \code \image\ code\ tag, like so:
+\code \\\image https://github.com/Zuzu-Typ/SlashBack/blob/master/Icon/SB.svg\\Broken Image \\ image\\\ code\
+\image https://github.com/Zuzu-Typ/SlashBack/blob/master/Icon/SB.svg\Broken Image \ image\
+
+You can alternatively use the \code \img\ code\ tag.
+
+\h3 \Tasks\ h3\
+\task checked \Need to add support for tasks\ task\
+Tasks can be created using the \code \task\ code\ tag.
+Each \code \task\ code\ tag has to be defined as \b \checked\ b\ or \b \unchecked\ b\.
+You can use \code \task checked\ code\, \code \tc\ code\ or \code \x\ code\ for checked tasks
+and \code \task unchecked\ code\, \code \tu\ code\ or \code \o\ code\ for unchecked tasks.
+In all of those cases, the end tag can be just \code \task\ code\.
+
+\h3 \Lists\ h3\
+\list unordered \
+\-\To create lists, you have to use the \code \list\ code\ tag.
+\list switch\ \c switching to ordered\
+\--\A list can either be \b \ordered\ b\ or \b \unordered\ b\.
+\list switch\ \c switching to unordered\
+\---\The start-tag of an ordered list can be any of:
+\list switch\ \c switching to ordered\
+\----\\code \list ordered\ code\
+\----\\code \lo\ code\
+\----\and \code \ol\ code\
+\list switch\ \c switching to unordered\
+\---\The start-tag of an unordered list can be any of:
+\list switch\ \c switching to ordered\
+\----\\code \list unordered\ code\
+\----\\code \lu\ code\
+\----\and \code \ul\ code\
+\--\A list entry can be added using dashes (\code \-\ code\).
+\list switch\ \c switching to unordered\
+\---\The \b \amount of dashes\ b\ translates to the \b \indent depth\ b\ (i.e. how far right the text is displayed)
+\---\This entry for example has depth \b \3\ b\ - so it has three dashes (\code \---\ code\).
+\list switch\ \c switching to ordered\
+\--\You can \b \switch\ b\ between \b \ordered\ b\ and \b \unordered\ b\ lists using the \code \list switch\ code\, \code \ls\ code\ or \code \sl\ code\ command.
+\--\The \b \end tag\ b\ of a list can be \code \list\ code\ or any of the start tags.
+\ list\
+Example:
+\code \
+\\list ordered \\
+\\-\\Install Python
+\\list switch\\
+\\--\\Go to \\url http://python.org \\python.org\\ url\\
+\\list switch\\
+\\-\\Run SlashBack.py
+\\-\\Enjoy.
+\\ list\\
+\ code\
+\list ordered \
+\-\Install Python
+\list switch\
+\--\Go to \url http://python.org \python.org\ url\
+\list switch\
+\-\Run SlashBack.py
+\-\Enjoy.
+\ list\
+
+\h3 \Tables\ h3\
+\table \
+Tag\-\Usage
+\code \table\ code\\-\Start and end tag for tables.
+\code \tbl\ code\\-\Same as \code \table\ code\
+\code \-\ code\\-\Table separator
+\ table\
+For tables, each \b \line\ b\ of SlashBack code translates to one \b \row\ b\ in the table.
+The \b \table separator\ b\ is used to separate \b \columns\ b\ of each row.
+The \b \first line\ b\ of each table in SlashBack code will be used as the \b \titles\ b\ of the columns.
+Example:
+\code \
+\\table \\
+USB connector \\-\\ Typical use                   \\-\\ Flippable
+A             \\-\\ Desktop computers and laptops \\-\\ No
+B             \\-\\ External devices              \\-\\ No
+C             \\-\\ Anything                      \\-\\ Yes
+\\ table\\
+\ code\
+\table \
+USB connector \-\ Typical use                   \-\ Flippable
+A             \-\ Desktop computers and laptops \-\ No
+B             \-\ External devices              \-\ No
+C             \-\ Anything                      \-\ Yes
+\ table\
+
+\h3 \Mentions\ h3\
+You can \b \@Mention\ b\ somebody using the \code \mention\ code\ command.
+Example:
+\code \\\mention Zuzu-Typ\\\ code\
+\mention Zuzu-Typ\
+
+\h3 \References\ h3\
+You can reference issues, pull requests and commits using the \code \reference\ code\ tag.
+(this is basically inline raw markdown)
+Example:
+\code \\\reference 68957d13505395ae1f885c450d42e534a7d3ba8e\\\ code\
+\reference 68957d13505395ae1f885c450d42e534a7d3ba8e\
+
+\h3 \Raw Markdown\ h3\
+Should you ever come across something that can't be done with SlashBack, please create a \url https://github.com/Zuzu-Typ/SlashBack/issues \new issue\ url\.
+Until the feature is added (or if it is not added), you can use the \code \raw\ code\ tag.
+Example:
+\code \
+\\raw \\<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>\\ raw\\
+\ code\
+\raw \<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>\ raw\
+
+\h3 \Comments\ h3\
+You can add \b \comments\ b\ to your documentation using the \code \comment\ code\ or \code \c\ code\ tag.
+If you want your \b \comments\ b\ to also be included in your \b \output markdown file\ b\ (but not in the final HTML), you may use the \code \icomment\ code\ or \code \ic\ code\ tag.
+
+\raw \&nbsp;\ raw\
 
 For reference, look at \url https://github.com/Zuzu-Typ/SlashBack/blob/master/README.sb \README.sb\ url\.
 
