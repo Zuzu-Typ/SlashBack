@@ -87,7 +87,9 @@ Alternatively the \code \q\ code\ tag can be used.
 
 \h3 \Images\ h3\
 Images can be embedded using the \code \image\ code\ tag, like so:
-\code \\\image https://raw.githubusercontent.com/Zuzu-Typ/SlashBack/future/Icon/SB.svg?sanitize=true \\Broken Image \\ image\\\ code\
+\code \
+\\image https://raw.githubusercontent.com/Zuzu-Typ/SlashBack/future/Icon/SB.svg?sanitize=true \\Broken Image \\ image\\
+\ code\
 \image https://raw.githubusercontent.com/Zuzu-Typ/SlashBack/future/Icon/SB.svg?sanitize=true \Broken Image \ image\
 (in this case \i \Broken Image\ i\ will be displayed if the image couldn't be found)
 
