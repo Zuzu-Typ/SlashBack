@@ -182,6 +182,13 @@ B             | External devices              | No
 C             | Anything                      | Yes
   
   
+### Separators  
+You can add a separator using the ``` separator ``` or ``` sep ``` command\.  
+Example:  
+``` \separator\ ```  
+
+---  
+  
 ### Raw Markdown  
 Should you ever come across something that can't be done with SlashBack, please create a [new issue](https://github.com/Zuzu-Typ/SlashBack/issues)\.  
 Until the feature is added \(or if it is not added\), you can use the ``` raw ``` tag\.  

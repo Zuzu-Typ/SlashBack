@@ -174,6 +174,12 @@ B             \-\ External devices              \-\ No
 C             \-\ Anything                      \-\ Yes
 \ table\
 
+\h3 \Separators\ h3\
+You can add a separator using the \code \separator\ code\ or \code \sep\ code\ command.
+Example:
+\code \\\separator\\\ code\
+\separator\
+
 \h3 \Raw Markdown\ h3\
 Should you ever come across something that can't be done with SlashBack, please create a \url https://github.com/Zuzu-Typ/SlashBack/issues \new issue\ url\.
 Until the feature is added (or if it is not added), you can use the \code \raw\ code\ tag.
