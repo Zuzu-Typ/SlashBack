@@ -36,9 +36,9 @@
 
 from builtins import open as builtins_open
 
-import sys, os, traceback
+import sys, os, traceback, string
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __welcome__ = f"""\
 SlashBack v{__version__} by Zuzu_Typ"""
@@ -63,54 +63,76 @@ class TextConfig:
     bold            = False
     italic          = False
     strikethrough   = False
+    underline       = False
     quote           = False
     table           = False
+    separator       = False
+    raw             = False
     code            = None
     image           = None
     url             = None
+    mention         = None
+    reference       = None
+    comment         = None
     list            = NO_LIST
     task            = NO_TASK
     header          = 0
-    separator       = False
     index           = 1
     indent          = 1
+    list_indices    = {} # only for ordered lists
     
     def __init__(self, other_config = None):
         if other_config:
             self.bold           = other_config.bold
             self.italic         = other_config.italic
             self.strikethrough  = other_config.strikethrough
+            self.underline      = other_config.underline
             self.quote          = other_config.quote
             self.table          = other_config.table
+            self.separator      = other_config.separator
+            self.raw            = other_config.raw
             self.code           = other_config.code
             self.image          = other_config.image
             self.url            = other_config.url
+            self.mention        = other_config.mention
+            self.reference      = other_config.reference
+            self.comment        = other_config.comment
             self.list           = other_config.list
             self.task           = other_config.task
             self.header         = other_config.header
-            self.separator      = other_config.separator
             self.index          = other_config.index
             self.indent         = other_config.indent
+            self.list_indices   = other_config.list_indices.copy()
 
     def __str__(self):
         out = set()
 
+        if self.comment:
+            out.add(f"/* {self.comment} */")
         if self.bold:
             out.add("bold")
         if self.italic:
             out.add("italic")
         if self.strikethrough:
             out.add("strikethrough")
+        if self.underline:
+            out.add("underline")
         if self.quote:
             out.add("quote")
         if self.table:
             out.add(f"table at {self.index}")
+        if self.raw:
+            out.add("<raw>")
         if self.code:
             out.add(f"code {self.code}")
         if self.image:
             out.add(f"image {self.image}")
         if self.url:
             out.add(f"url {self.url}")
+        if self.mention:
+            out.add(f"mention {self.mention}")
+        if self.reference:
+            out.add(f"reference {self.reference}")
         if self.list:
             out.add(("ordered list" if self.list == self.ORDERED_LIST else "unordered list") + f" at {self.index}")
         if self.task:
@@ -134,30 +156,39 @@ class ParsedText:
         self.text_list = text_list
 
     def to_markdown(self):
-        out = []
+        out = [f"[//]: # (generated using SlashBack {__version__})\n\n".encode()]
 
         current_text_config = TextConfig()
 
         table_signalized = True
 
         for text in self.text_list:
-            text_string = text.text.replace(b"\t", b"    ").replace(b"    ", b"&emsp;").replace(b"  ", b"&nbsp;" * 2).replace(b"\r\n", b"\n").replace(b"\r", b"\n").replace(b"\n", b"  \n")
+            text_string = text.text
             this_text_config = text.text_config
+
+            if this_text_config.raw:
+                out.append(text_string)
+                continue
 
             if not this_text_config.code:
                 for char in "\\`*_{}[]()#+-.!":
                     text_string = text_string.replace(char.encode(), f"\\{char}".encode())
-                for char, replacement in ((b"<", b"&lt;"), (b">", b"&gt;"), (b"~", b"&#126;"), (b"|", b"&#124;")):
+                for char, replacement in ((b"&", b"&amp;"), (b"<", b"&lt;"), (b">", b"&gt;"), (b"~", b"&#126;"), (b"|", b"&#124;"), (b"@", b"@<!---->"), (b"`", b"&#96;")):
                     text_string = text_string.replace(char, replacement)
+
+                if not this_text_config.table:
+                    text_string = text_string.replace(b"\t", b"    ").replace(b"  ", b"&nbsp;" * 2).replace(b"\r\n", b"\n").replace(b"\r", b"\n").replace(b"\n", b"  \n")
             else:
-                text_string = text_string.replace(b"`", b"\\`")
+                pass#text_string = text_string.replace(b"`", b"&#96;")
 
             if not table_signalized and b"\n" in text_string:
                 table_signalized = True
                 text_string = text_string.replace(b"\n", b"\n" + b"|".join([b"-"] * (this_text_config.index + 1)) + b"\n")
 
-            if current_text_config.list and this_text_config.list and current_text_config.index < this_text_config.index:
-                out.append(b"    " * (this_text_config.indent - 1) + f"{current_text_config.index}. ".encode() if this_text_config.list == TextConfig.ORDERED_LIST else b"* ")
+            
+
+            if this_text_config.list and this_text_config.index != 0 and current_text_config.index != this_text_config.index:
+                out.append(b"    " * (this_text_config.indent - 1) + ( f"{this_text_config.index}. ".encode() if this_text_config.list == TextConfig.ORDERED_LIST else b"* "))
 
             if current_text_config.table and this_text_config.table and current_text_config.index < this_text_config.index:
                 out.append(b"|")
@@ -170,6 +201,9 @@ class ParsedText:
 
             if not current_text_config.strikethrough and this_text_config.strikethrough:
                 out.append(b"~~")
+
+            if not current_text_config.underline and this_text_config.underline:
+                out.append(b"<u>")
 
             if not current_text_config.quote and this_text_config.quote:
                 out.append(b">")
@@ -202,6 +236,15 @@ class ParsedText:
 
             if not current_text_config.separator and this_text_config.separator:
                 out.append(b"\n---")
+
+            if not current_text_config.mention and this_text_config.mention:
+                out.append(b"@" + this_text_config.mention)
+
+            if not current_text_config.reference and this_text_config.reference:
+                out.append(this_text_config.reference)
+
+            if not current_text_config.comment and this_text_config.comment:
+                out.append(f" [//]: # ({this_text_config.comment.decode()}) ".encode())
             
             # backward #
 
@@ -214,8 +257,14 @@ class ParsedText:
             if current_text_config.code and not this_text_config.code:
                 out.append(b" ```")
 
+            if current_text_config.task and not this_text_config.task:
+                out.append(b"\n\n")
+
             if current_text_config.quote and not this_text_config.quote:
                 out.append(b"\n\n")
+
+            if current_text_config.underline and not this_text_config.underline:
+                out.append(b"</u>")
 
             if current_text_config.strikethrough and not this_text_config.strikethrough:
                 out.append(b"~~")
@@ -251,8 +300,6 @@ class ParsedText:
         if current_text_config.bold:
             out.append(b"**")
             
-            
-            
         return b"".join(out)
                 
 
@@ -276,134 +323,121 @@ class SlashBackParser:
         file_.write(self.parsed_text.to_markdown())
         file_.close()
 
-    def parse_single(self, command, config):
-        end = True if command.startswith(b" ") else False
+    def parse_single(self, command, config):        
+        command = command.lstrip((string.whitespace + "!#/:|+.~>_<").encode()).rstrip()
+
+        if config.separator: config.separator   = False
+        if config.reference: config.reference   = None
+        if config.mention: config.mention       = None
+        if config.comment: config.comment       = None
         
-        command = command.strip()
 
-        if config.separator: config.separator = False
-
-        if command == b"h1":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h1\\ before opening \\h1 \\")
-            config.header = 0 if end else 1
+        if command == b"raw":
+            config.raw = not config.raw
+            
+        elif command == b"h1":
+            config.header = 0 if config.header else 1
         elif command == b"h2":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h2\\ before opening \\h2 \\")
-            config.header = 0 if end else 2
+            config.header = 0 if config.header else 2
         elif command == b"h3":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h3\\ before opening \\h3 \\")
-            config.header = 0 if end else 3
+            config.header = 0 if config.header else 3
         elif command == b"h4":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h4\\ before opening \\h4 \\")
-            config.header = 0 if end else 4
+            config.header = 0 if config.header else 4
         elif command == b"h5":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h5\\ before opening \\h5 \\")
-            config.header = 0 if end else 5
+            config.header = 0 if config.header else 5
         elif command == b"h6":
-            if end and not config.header:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ h6\\ before opening \\h6 \\")
-            config.header = 0 if end else 6
+            config.header = 0 if config.header else 6
 
         elif command == b"b":
-            if end and not config.bold:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ b\\ before opening \\b \\")
-            config.bold = not end
+            config.bold = not config.bold
         elif command == b"i":
-            if end and not config.italic:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ i\\ before opening \\i \\")
-            config.italic = not end
+            config.italic = not config.italic
 
-        elif command == b"sep":
+        elif command in (b"separator", b"sep"):
             config.separator = True
 
         elif command == b"s":
-            if end and not config.strikethrough:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ s\\ before opening \\s \\")
-            config.strikethrough = not end
+            config.strikethrough = not config.strikethrough
 
-        elif command == b"quote":
-            if end and not config.quote:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ quote\\ before opening \\quote \\")
-            config.quote = not end
+        elif command == b"u":
+            config.underline = not config.underline
 
-        elif command == b"table":
+        elif command in (b"quote", b"q"):
+            config.quote = not config.quote
+
+        elif command in (b"table", b"tbl"):
             if config.list:
                 raise SlashBackParserError("A table can't be created inside a list")
-            if end and not config.table:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ table\\ before opening \\table \\")
-            config.table = not end
+            config.table = not config.table
             config.index = 0
 
-        elif command == b"list ordered":
-            if config.table:
-                raise SlashBackParserError("A list can't be created inside a table")
-            if end and not config.list:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ list\\ before opening \\list \\")
-            config.list = config.NO_LIST if end else config.ORDERED_LIST
-            config.index = 1
-
-        elif command == b"list unordered":
-            if config.table:
-                raise SlashBackParserError("A list can't be created inside a table")
-            if end and not config.list:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ list\\ before opening \\list \\")
-            config.list = config.NO_LIST if end else config.UNORDERED_LIST
-            config.index = 1
-
-        elif command == b"list":
-            if not end:
-                raise SlashBackParseError("Unspecified list type")
-            
+        elif command in (b"list switch", b"ls", b"sl"):
             if not config.list:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ list\\ before opening \\list \\")
+                raise SlashBackParserError("There's no list to switch here")
+            config.list = config.ORDERED_LIST if config.list == config.UNORDERED_LIST else config.UNORDERED_LIST
+            config.index = 0
+
+        elif command in (b"list ordered", b"lo", b"ol"):
+            if config.table:
+                raise SlashBackParserError("A list can't be created inside a table")
+            config.list = config.NO_LIST if config.list else config.ORDERED_LIST
+            config.index = 0
+
+        elif command in (b"list unordered", b"lu", b"ul"):
+            if config.table:
+                raise SlashBackParserError("A list can't be created inside a table")
+            config.list = config.NO_LIST if config.list else config.UNORDERED_LIST
+            config.index = 0
+
+        elif command in (b"list", b"lo", b"ol", b"lu", b"ul"):
+            if not config.list:
+                raise SlashBackParseError("Unspecified list type")
             
             config.list = config.NO_LIST
 
-        elif command == b"task checked":
-            if end and not config.task:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ task\\ before opening \\task \\")
-            config.task = config.NO_TASK if end else config.CHECKED_TASK
+            config.list_indices = {}
 
-        elif command == b"task unchecked":
-            if end and not config.task:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ task\\ before opening \\task \\")
-            config.task = config.NO_TASK if end else config.UNCHECKED_TASK
+        elif command in (b"task checked", b"tc", b"x"):
+            config.task = config.NO_TASK if config.task else config.CHECKED_TASK
 
-        elif command == b"task":
-            if not end:
-                raise SlashBackParseError("Unspecified task type")
-            
+        elif command in (b"task unchecked", b"tu", b"o"):
+            config.task = config.NO_TASK if config.task else config.UNCHECKED_TASK
+
+        elif command in (b"task", b"tc", b"tu", b"x", b"o"):
             if not config.task:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ task\\ before opening \\task \\")
+                raise SlashBackParseError("Unspecified task type")
             
             config.task = config.NO_TASK
 
-        elif command == b"image":
-            if not end:
-                raise SlashBackParseError("Unspecified image type")
-
+        elif command in (b"image", b"img"):
             if not config.image:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ image\\ before opening \\image \\")
+                raise SlashBackParseError("Unspecified image type")
 
             config.image = None
 
-        elif command == b"url":
-            if not end:
-                raise SlashBackParseError("Unspecified url link")
-
+        elif command == b"url": #TODO
             if not config.url:
-                raise SlashBackParserError("Invalid Syntax. Closing \\ url\\ before opening \\url \\")
+                raise SlashBackParseError("Unspecified url link")
 
             config.url = None
 
         elif command.count(b"-") == len(command):
-            config.index += 1
             if config.list:
                 config.indent = command.count(b"-")
+                
+                for indent in config.list_indices.copy():
+                    if indent > config.indent:
+                        del config.list_indices[indent]
+                        
+                if config.list == config.ORDERED_LIST:
+                    config.index = config.list_indices.get(config.indent, 1)
+                    
+                    config.list_indices[config.indent] = config.index + 1
+                else:
+                    config.index += 1
+                    
+            elif config.table:
+                config.index += 1
             if not config.list and not config.table:
                 raise SlashBackParserError(f"Unexpected \\{command.decode()}\\ token")
 
@@ -413,19 +447,25 @@ class SlashBackParser:
             info = command[space_index:].strip() if space_index != -1 else ""
 
             if first_command == b"image":
-                if end and not config.image:
-                    raise SlashBackParserError("Invalid Syntax. Closing \\ image\\ before opening \\image \\")
-                config.image = None if end else info
+                config.image = None if config.image else info
 
             elif first_command == b"url":
-                if end and not config.url:
-                    raise SlashBackParserError("Invalid Syntax. Closing \\ url\\ before opening \\url \\")
-                config.url = None if end else info
+                config.url = None if config.url else info
 
             elif first_command == b"code":
-                if end and not config.code:
-                    raise SlashBackParserError("Invalid Syntax. Closing \\ code\\ before opening \\code \\")
-                config.code = None if end else info if info else True
+                config.code = None if config.code else info if info else True
+
+            elif first_command == b"mention":
+                config.mention = info
+
+            elif first_command == b"reference":
+                config.reference = info
+
+            elif first_command in (b"c", b"comment", b"ignore"):
+                pass
+
+            elif first_command in (b"ic", b"icomment"):
+                config.comment = info
 
             else:
                 raise SlashBackParserError(f"Unknown command \"{first_command.decode()}\"")
