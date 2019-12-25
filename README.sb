@@ -171,19 +171,6 @@ B             \-\ External devices              \-\ No
 C             \-\ Anything                      \-\ Yes
 \ table\
 
-\h3 \Mentions\ h3\
-You can \b \@Mention\ b\ somebody using the \code \mention\ code\ command.
-Example:
-\code \\\mention Zuzu-Typ\\\ code\
-\mention Zuzu-Typ\
-
-\h3 \References\ h3\
-You can reference issues, pull requests and commits using the \code \reference\ code\ tag.
-(this is basically inline raw markdown)
-Example:
-\code \\\reference 68957d13505395ae1f885c450d42e534a7d3ba8e\\\ code\
-\reference 68957d13505395ae1f885c450d42e534a7d3ba8e\
-
 \h3 \Raw Markdown\ h3\
 Should you ever come across something that can't be done with SlashBack, please create a \url https://github.com/Zuzu-Typ/SlashBack/issues \new issue\ url\.
 Until the feature is added (or if it is not added), you can use the \code \raw\ code\ tag.

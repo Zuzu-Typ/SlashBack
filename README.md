@@ -179,19 +179,6 @@ B             | External devices              | No
 C             | Anything                      | Yes
   
   
-### Mentions  
-You can **@<!---->Mention** somebody using the ``` mention ``` command\.  
-Example:  
-``` \mention Zuzu-Typ\ ```  
-@Zuzu-Typ  
-  
-### References  
-You can reference issues, pull requests and commits using the ``` reference ``` tag\.  
-\(this is basically inline raw markdown\)  
-Example:  
-``` \reference 68957d13505395ae1f885c450d42e534a7d3ba8e\ ```  
-68957d13505395ae1f885c450d42e534a7d3ba8e  
-  
 ### Raw Markdown  
 Should you ever come across something that can't be done with SlashBack, please create a [new issue](https://github.com/Zuzu-Typ/SlashBack/issues)\.  
 Until the feature is added \(or if it is not added\), you can use the ``` raw ``` tag\.  
