@@ -176,9 +176,9 @@ Should you ever come across something that can't be done with SlashBack, please 
 Until the feature is added (or if it is not added), you can use the \code \raw\ code\ tag.
 Example:
 \code \
-\\raw \\<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>\\ raw\\
+\\raw \\<font face="verdana" color="green" size=5em>This text may be green (but not on GitHub)</font>\\ raw\\
 \ code\
-\raw \<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>\ raw\
+\raw \<font face="verdana" color="green" size=5em>This text may be green (but not on GitHub)</font>\ raw\
 
 \h3 \Comments\ h3\
 You can add \b \comments\ b\ to your documentation using the \code \comment\ code\ or \code \c\ code\ tag.

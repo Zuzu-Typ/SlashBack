@@ -184,9 +184,9 @@ Should you ever come across something that can't be done with SlashBack, please 
 Until the feature is added \(or if it is not added\), you can use the ``` raw ``` tag\.  
 Example:  
 ``` 
-\raw \<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>\ raw\
+\raw \<font face="verdana" color="green" size=5em>This text may be green (but not on GitHub)</font>\ raw\
  ```  
-<font face="verdana" color="green" size=5em>Whaaat? Green Text?</font>  
+<font face="verdana" color="green" size=5em>This text may be green (but not on GitHub)</font>  
   
 ### Comments  
 You can add **comments** to your documentation using the ``` comment ``` or ``` c ``` tag\.  
